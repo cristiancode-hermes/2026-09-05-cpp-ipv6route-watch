@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ipv6route-watch</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e2e; font-family: 'Fira Code', monospace; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 20px; }
+  .terminal {
+    background: #181825;
+    border-radius: 12px;
+    padding: 24px 28px;
+    color: #cdd6f4;
+    font-size: 13px;
+    line-height: 1.55;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    max-width: 1040px;
+    width: 100%;
+  }
+  .cyan { color: #89dceb; }
+  .green { color: #a6e3a1; }
+  .yellow { color: #f9e2af; }
+  .red { color: #f38ba8; }
+  .dim { color: #6c7086; }
+  .magenta { color: #cba6f7; }
+  .blue { color: #89b4fa; }
+  .bold { font-weight: 600; }
+  .section-title { color: #cdd6f4; font-weight: 600; margin-top: 4px; margin-bottom: 6px; }
+  .agg-row { display: flex; gap: 18px; margin-bottom: 8px; flex-wrap: wrap; }
+  .agg-label { color: #6c7086; font-size: 10.5px; }
+  .agg-value { color: #cdd6f4; font-size: 14px; font-weight: 600; }
+  table { border-collapse: collapse; margin-top: 10px; width: 100%; font-size: 12px; }
+  th { color: #6c7086; text-align: left; font-weight: 400; padding: 2px 12px 2px 0; border-bottom: 1px solid #313244; }
+  td { padding: 2px 12px 2px 0; white-space: nowrap; }
+  .cmd { background: #11111b; border-radius: 8px; padding: 12px 16px; margin-top: 14px; font-size: 12px; }
+  .cmd .line { color: #a6e3a1; }
+  .notes { margin-top: 12px; color: #6c7086; font-size: 11px; line-height: 1.55; }
+  .prompt { margin-top: 16px; color: #a6e3a1; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="section-title">-- IPv6 FIB summary  demo (12 rutas, 3 ifaces) --</div>
+  <div class="agg-row">
+    <div><div class="agg-label">routes</div><div class="agg-value bold cyan">12</div></div>
+    <div><div class="agg-label">ifaces</div><div class="agg-value">3</div></div>
+    <div><div class="agg-label">max_plen</div><div class="agg-value bold yellow">128</div></div>
+    <div><div class="agg-label">local</div><div class="agg-value bold green">2</div></div>
+    <div><div class="agg-label">::/0</div><div class="agg-value">2</div></div>
+    <div><div class="agg-label">anycast</div><div class="agg-value">1</div></div>
+    <div><div class="agg-label">multicast</div><div class="agg-value yellow">1</div></div>
+  </div>
+  <div class="agg-row">
+    <div><div class="agg-label">link(fe80) </div><div class="agg-value">1</div></div>
+    <div><div class="agg-label">unicast </div><div class="agg-value">3</div></div>
+    <div><div class="agg-label">unreachable </div><div class="agg-value red">1</div></div>
+    <div><div class="agg-label">blackhole </div><div class="agg-value red">1</div></div>
+    <div><div class="agg-label">source </div><div class="agg-value dim">demo; /proc/net/ipv6_route</div></div>
+  </div>
+  <table>
+    <tr><th>DEST</th><th>PLEN</th><th>SRC</th><th>GATEWAY</th><th>METRIC</th><th>FLAGS</th><th>IFACE</th></tr>
+    <tr><td class="bold">::/0</td><td>0</td><td>::</td><td class="green">fe80::1</td><td>400</td><td class="dim">UP|GATEWAY|DEFAULT|ADDRCONF</td><td class="cyan">eth0</td></tr>
+    <tr><td class="bold">::/0</td><td>0</td><td>::</td><td class="green">fe80::2</td><td>0</td><td class="dim">UP|GATEWAY|DEFAULT|ADDRCONF</td><td class="cyan">wg0</td></tr>
+    <tr><td class="bold green">2001:db8:1::1/128</td><td>128</td><td>::</td><td>::</td><td>0</td><td class="dim">UP|HOST|LOCAL</td><td class="cyan">eth0</td></tr>
+    <tr><td class="bold">fe80::/64</td><td>64</td><td>::</td><td>::</td><td>100</td><td class="dim">UP|ADDRCONF</td><td class="cyan">eth0</td></tr>
+    <tr><td class="bold">2001:db8:1::/64</td><td>64</td><td>::</td><td class="green">fe80::1</td><td>100</td><td class="dim">UP|GATEWAY|ADDRCONF</td><td class="cyan">eth0</td></tr>
+    <tr><td class="bold">fd00::/8</td><td>8</td><td>::</td><td class="green">fe80::2</td><td>100</td><td class="dim">UP|GATEWAY|ADDRCONF</td><td class="cyan">wg0</td></tr>
+    <tr><td class="bold yellow">ff00::/8</td><td>8</td><td>::</td><td>::</td><td>0</td><td class="dim">UP|MULTICAST</td><td class="cyan">eth0</td></tr>
+    <tr><td class="bold">2001:db8:2::/64</td><td>64</td><td>::</td><td>::</td><td>100</td><td class="dim">UP|ALLONLINK|ADDRCONF</td><td class="cyan">eth0</td></tr>
+    <tr><td class="bold green">2001:db8:3::1/128</td><td>128</td><td>::</td><td>::</td><td>0</td><td class="dim">UP|HOST|ANYCAST</td><td class="cyan">lo</td></tr>
+    <tr><td class="bold red">unreachable</td><td>0</td><td>::</td><td>::</td><td>1</td><td class="dim">UP|NONEXTHOP</td><td class="cyan">lo</td></tr>
+    <tr><td class="bold red">blackhole</td><td>0</td><td>::</td><td>::</td><td>1</td><td class="dim">UP|NONEXTHOP</td><td class="cyan">lo</td></tr>
+  </table>
+  <div style="margin-top:14px">
+    <span class="agg-label">plen histogram: </span><span>0:4 8:2 64:3 128:3</span>
+    <span class="agg-label">&nbsp;&nbsp;rt6_stats: </span><span>trees 1 · table_entries 4 · rt_entries 1</span>
+  </div>
+  <div class="cmd">
+    <div class="line">$ g++ -std=c++23 -O2 -Wall -Wextra src/main.cpp -o ipv6route-watch</div>
+    <div class="line">$ ./ipv6route-watch --demo</div>
+    <div class="line">$ ./ipv6route-watch --file sample-ipv6route.table --no-color</div>
+    <div class="line">$ ./ipv6route-watch --selftest   <span class="dim"># 51 passed, 0 failed</span></div>
+  </div>
+  <div class="notes">
+    -- plen en hex: 80 = /128, 40 = /64, 08 = /8 · RFC 5952: ::1, fe80::, 2001:db8::1<br>
+    -- local = direcciones asignadas (if_inet6) · literal kernel: unreachable / blackhole / throw / nat
+  </div>
+  <div class="prompt">$ █</div>
+</div>
+</body>
+</html>
